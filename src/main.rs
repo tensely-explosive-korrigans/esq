@@ -1,5 +1,6 @@
 mod utils;
 mod commands;
+mod elasticsearch;
 
 use clap::{Parser, Subcommand};
 use utils::*;
@@ -62,8 +63,8 @@ fn run() -> Result<(), ESQError> {
                 &args.index,
                 &args.from,
                 &args.to,
-                &args.select,
-                &args.query,
+                &args.select_clause,
+                &args.where_clause,
                 args.follow,
                 &args.around,
                 &args.lines,

@@ -93,14 +93,9 @@ pub fn load_config(config_file: &PathBuf) -> Result<Option<Config>, ESQError> {
 }
 
 pub fn save_config(config: &Config, config_file: &PathBuf) -> Result<(), ESQError> {
-    // Extraire le chemin du répertoire
     if let Some(parent_dir) = config_file.parent() {
-        // Vérifier si le répertoire existe
         if !parent_dir.exists() {
-            // Créer le répertoire
             fs::create_dir_all(&parent_dir)?;
-
-            // S'assurer que le répertoire a les bonnes permissions
             set_dir_permissions(parent_dir)?;
         }
     }
@@ -108,7 +103,6 @@ pub fn save_config(config: &Config, config_file: &PathBuf) -> Result<(), ESQErro
     let toml = toml::to_string(&config)?;
     fs::write(&config_file, toml)?;
 
-    // Set file permissions (600)
     let metadata = fs::metadata(&config_file)?;
     let mut perms = metadata.permissions();
     perms.set_mode(0o600);
@@ -119,15 +113,9 @@ pub fn save_config(config: &Config, config_file: &PathBuf) -> Result<(), ESQErro
 fn set_dir_permissions(dir: &Path) -> Result<(), ESQError> {
     let metadata = fs::metadata(dir)?;
     let mut perms = metadata.permissions();
-    perms.set_mode(0o700); // Permissions pour le répertoire
+    perms.set_mode(0o700); 
     fs::set_permissions(dir, perms)?;
     Ok(())
-}
-
-pub fn get_client() -> Result<reqwest::blocking::Client, ESQError> {
-    let client = reqwest::blocking::Client::builder()
-        .build()?;
-    Ok(client)
 }
 
 pub fn add_auth(request: reqwest::blocking::RequestBuilder, config: &Config) -> reqwest::blocking::RequestBuilder {

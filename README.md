@@ -2,13 +2,17 @@
 
 esq is an opinionated, minimalist and blazing-fast command-line tool to query and manipulate logs in Elasticsearch. It's designed to be a small, composable tool that works well with others.
 
-🚀 Speed First · 🛠 Use the Right Tools · 🔥 Minimalism Over Complexity
+
+## ⚡ Requirements
+
+- Elasticsearch 7.10 or higher
 
 ## 🎯 Philosophy
 
 🐧 Linux-style simplicity – esq does one thing well: fetching logs fast.  
-🔗 Composability – Use it with your favorite command line tools
-♻️ No reinventing the wheel – esq relies on [dateparser](https://docs.rs/dateparser/latest/dateparser/) for date parsing.  
+
+🛠 Composability – Use it with your favorite command line tools.
+
 💡 You won't find fancy built-in JSON parsing or log transformations here. Use the json swiss army knife aka JQ to process output.  
 
 ## 🚀 Installation
@@ -45,31 +49,42 @@ esq cat my-logs-index --follow
 # Select specific fields only
 esq cat my-logs-index --select "timestamp,message,level"
 
+# Fetch logs with specific conditions
+esq cat my-logs-index --where "level:ERROR"
+
 # Get more logs
 esq cat my-logs-index -n 10000
+
 ```
 
-## 🔄 Composability Examples
+## 🛠 Composability Examples
+
+
+### Formating logs with jq
+```bash
+esq cat my-logs-index  --select @timestamp,level,message --where level:ERROR | jq ".message"
+```
 
 ### Filter logs with jq
 ```bash
-esq cat my-logs-index | jq 'select(.level == "ERROR")'
+esq cat my-logs-index --where level:ERROR | jq 'select(.message | test("critical"))'
 ```
 
 ### Count logs by level
 ```bash
-esq cat my-logs-index | jq -r '.level' | sort | uniq -c
+esq cat my-logs-index --select level |  sort | uniq -c
 ```
 
 ### Extract structured data and convert to CSV
 ```bash
-esq cat my-logs-index | jq -r '[.timestamp, .level, .message] | @csv' > logs.csv
+esq cat my-logs-index --select timestamp,level,message | jq -r '[.timestamp, .level, .message] | @csv' > logs.csv
 ```
 
 
 ## 📊 Performance Tips
 
 - Use the `--select` option to fetch only the fields you need
+- Use the `--where` option to filter logs at the source, reducing data transfer
 - Process logs in batches (reasonable `-n` values) for better performance
 - For time-based queries, use narrower time ranges when possible
 
@@ -89,9 +104,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgements
 
+- The Rust developers 🦀 for creating a robust and efficient ecosystem
 - [clap](https://github.com/clap-rs/clap) for powerful command-line argument parsing
 - [dateparser](https://docs.rs/dateparser/latest/dateparser/) for flexible date parsing
-- The Rust ecosystem for making blazing-fast tools possible
 - Elasticsearch for their powerful search capabilities
 
 ---
