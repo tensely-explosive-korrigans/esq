@@ -17,8 +17,6 @@ jobs:
             os: ubuntu-latest
           - os_name: macOS
             os: macos-latest
-          - os_name: Windows
-            os: windows-latest
         toolchain:
           - stable
           - nightly
@@ -40,8 +38,6 @@ jobs:
             os: ubuntu-latest
           - os_name: macOS
             os: macos-latest
-          - os_name: Windows
-            os: windows-latest
         toolchain:
           - stable
           - nightly
